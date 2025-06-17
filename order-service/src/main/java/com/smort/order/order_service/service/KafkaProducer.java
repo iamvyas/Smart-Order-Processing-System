@@ -1,18 +1,20 @@
-package com.smort.order.order_service.service;
+package com.smort.order.order_service.producer;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.smort.order.order_service.model.OrderCreatedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
 
-    private static final String TOPIC = "order-events";
+    private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
 
-    @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    public KafkaProducer(KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
-    public void sendOrderCreatedEvent(Object event) {
-        kafkaTemplate.send(TOPIC, event);
+    public void sendOrderCreatedEvent(OrderCreatedEvent event) {
+        kafkaTemplate.send("order-events", event);
+        System.out.println("Sent Kafka message => " + event);
     }
 }
