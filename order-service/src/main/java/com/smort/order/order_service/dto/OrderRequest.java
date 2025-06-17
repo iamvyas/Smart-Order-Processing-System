@@ -5,7 +5,7 @@ public class OrderRequest {
     private int quantity;
     private double price;
 
-    // 🔧 Manually added getters
+    //Manually added getters
     public String getProductName() {
         return productName;
     }
@@ -18,7 +18,7 @@ public class OrderRequest {
         return price;
     }
 
-    // 🔧 And optionally setters (needed for deserialization)
+    // optionally setters (needed for deserialization)
     public void setProductName(String productName) {
         this.productName = productName;
     }

@@ -5,6 +5,8 @@ import com.smort.order.order_service.dto.OrderRequest;
 import com.smort.order.order_service.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.smort.order.order_service.model.OrderCreatedEvent;
+
 
 import java.util.List;
 
@@ -14,12 +16,24 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     public Order createOrder(OrderRequest request) {
         Order order = new Order();
         order.setProductName(request.getProductName());
         order.setQuantity(request.getQuantity());
         order.setPrice(request.getPrice());
-        return orderRepository.save(order);
+
+        Order saved = orderRepository.save(order);
+
+        OrderCreatedEvent event = new OrderCreatedEvent(
+            saved.getId(), saved.getProductName(), saved.getQuantity(), saved.getPrice()
+        );
+
+        kafkaProducer.sendOrderCreatedEvent(event);
+
+        return saved;
     }
 
     public List<Order> getAllOrders() {
