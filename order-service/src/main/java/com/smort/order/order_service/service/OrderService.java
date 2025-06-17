@@ -18,6 +18,10 @@ public class OrderService {
 
     @Autowired
     private KafkaProducer kafkaProducer;
+    
+    @Autowired
+    private RabbitMQProducer rabbitMQProducer;
+
 
     public Order createOrder(OrderRequest request) {
         Order order = new Order();
@@ -32,6 +36,8 @@ public class OrderService {
         );
 
         kafkaProducer.sendOrderCreatedEvent(event);
+
+        rabbitMQProducer.sendOrderCreatedEvent(event);
 
         return saved;
     }
